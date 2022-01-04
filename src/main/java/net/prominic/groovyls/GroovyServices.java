@@ -462,8 +462,7 @@ public class GroovyServices implements TextDocumentService, WorkspaceService, La
 	private Set<PublishDiagnosticsParams> handleErrorCollector(ErrorCollector collector) {
 		Map<URI, List<Diagnostic>> diagnosticsByFile = new HashMap<>();
 
-		@SuppressWarnings("unchecked")
-		List<Message> errors = collector.getErrors();
+		List<? extends Message> errors = collector.getErrors();
 		if (errors != null) {
 			errors.stream().filter((Object message) -> message instanceof SyntaxErrorMessage)
 					.forEach((Object message) -> {
