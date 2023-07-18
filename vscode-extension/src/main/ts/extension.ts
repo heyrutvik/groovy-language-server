@@ -114,6 +114,18 @@ function startLanguageServer() {
           return;
         }
         progress.report({ message: INITIALIZING_MESSAGE });
+        let connectionInfo = {
+            port: 9000,
+            host: "localhost"
+        };
+        let serverOptions = () => {
+            // Connect to language server via socket
+            let socket = net.connect(connectionInfo);
+            return Promise.resolve({
+                writer: socket,
+                reader: socket
+            });
+        };
         let clientOptions: LanguageClientOptions = {
           documentSelector: [{ scheme: "file", language: "groovy" }],
           synchronize: {
@@ -133,24 +145,10 @@ function startLanguageServer() {
             protocol2Code: (value) => vscode.Uri.parse(value),
           },
         };
-        let args = [
-          "-jar",
-          path.resolve(
-            extensionContext.extensionPath,
-            "bin",
-            "groovy-language-server-all.jar"
-          ),
-        ];
-        //uncomment to allow a debugger to attach to the language server
-        //args.unshift("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005,quiet=y");
-        let executable: Executable = {
-          command: javaPath,
-          args: args,
-        };
         languageClient = new LanguageClient(
           "groovy",
           "Groovy Language Server",
-          executable,
+          serverOptions,
           clientOptions
         );
         try {
