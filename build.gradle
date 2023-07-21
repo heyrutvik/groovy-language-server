@@ -1,6 +1,7 @@
 plugins {
   id "com.github.johnrengelman.shadow" version "5.2.0"
   id "java"
+  id "application"
 }
 
 java {
@@ -29,9 +30,12 @@ repositories  {
 dependencies {
   implementation "org.eclipse.lsp4j:org.eclipse.lsp4j:0.12.0"
   implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.12.0"
+  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.websocket.jakarta:0.12.0"
   implementation "org.apache.groovy:groovy:4.0.5"
   implementation "com.google.code.gson:gson:2.8.7"
   implementation "io.github.classgraph:classgraph:4.8.138"
+  implementation "org.glassfish.tyrus:tyrus-server:2.1.3"
+  implementation "org.glassfish.tyrus:tyrus-container-grizzly-server:2.1.3"
   testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
 }
@@ -48,4 +52,8 @@ task deployMoonshineTest(type: Copy) {
     dependsOn(build)
     from "build/libs/groovy-language-server-all.jar"
     into "../Moonshine-IDE/ide/MoonshineDESKTOPevolved/bin-debug/elements/groovy-language-server/"
+}
+
+application {
+    mainClassName = 'net.prominic.groovyls.GroovyLanguageServer'
 }
