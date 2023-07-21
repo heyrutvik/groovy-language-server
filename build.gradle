@@ -24,6 +24,7 @@ shadowJar {
 
 repositories  {
   mavenCentral()
+  mavenLocal()
 }
 
 dependencies {

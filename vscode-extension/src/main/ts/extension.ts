@@ -20,11 +20,15 @@
 import findJava from "./utils/findJava";
 import * as path from "path";
 import * as vscode from "vscode";
+import { WebSocket } from "ws";
+import { TextDecoder } from 'util';
 import {
   LanguageClient,
   LanguageClientOptions,
   Executable,
+  StreamInfo,
 } from "vscode-languageclient/node";
+import { Duplex } from "stream";
 
 const MISSING_JAVA_ERROR =
   "Could not locate valid JDK. To configure JDK manually, use the groovy.java.home setting.";
@@ -114,41 +118,53 @@ function startLanguageServer() {
           return;
         }
         progress.report({ message: INITIALIZING_MESSAGE });
-        let connectionInfo = {
-            port: 9000,
-            host: "localhost"
-        };
-        let serverOptions = () => {
-            // Connect to language server via socket
-            let socket = net.connect(connectionInfo);
-            return Promise.resolve({
-                writer: socket,
-                reader: socket
-            });
-        };
         let clientOptions: LanguageClientOptions = {
           documentSelector: [{ scheme: "file", language: "groovy" }],
           synchronize: {
             configurationSection: "groovy",
-          },
-          uriConverters: {
-            code2Protocol: (value: vscode.Uri) => {
-              if (/^win32/.test(process.platform)) {
-                //drive letters on Windows are encoded with %3A instead of :
-                //but Java doesn't treat them the same
-                return value.toString().replace("%3A", ":");
-              } else {
-                return value.toString();
-              }
-            },
-            //this is just the default behavior, but we need to define both
-            protocol2Code: (value) => vscode.Uri.parse(value),
-          },
+          }
         };
+//         let args = [
+//           "-jar",
+//           path.resolve(
+//             extensionContext.extensionPath,
+//             "bin",
+//             "groovy-language-server-all.jar"
+//           ),
+//         ];
+//         //uncomment to allow a debugger to attach to the language server
+//         args.unshift("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005,quiet=y");
+//         let executable: Executable = {
+//           command: javaPath,
+//           args: args,
+//         };
+        
+        const ws = new WebSocket("ws://localhost:9000/groovy-language-server");
+        console.log(ws.binaryType)
+        ws.onopen = (event) => {
+          console.log(event)
+        }
+        let connection = WebSocket.createWebSocketStream(ws);
+        connection.on("data", function (chunk) {
+          console.log(new TextDecoder().decode(chunk));
+        });
+        connection.on("error", function (error) {
+          console.log(error);
+        });
+        let serverOptions = () => {
+          return new Promise<StreamInfo>((resolve, reject) => {
+              console.log("connection: " + JSON.stringify(connection))
+              let result: StreamInfo = {
+                writer: connection,
+                reader: connection
+              };
+              resolve(result)
+          })
+        }
         languageClient = new LanguageClient(
           "groovy",
           "Groovy Language Server",
-          serverOptions,
+          serverOptions, // executable
           clientOptions
         );
         try {

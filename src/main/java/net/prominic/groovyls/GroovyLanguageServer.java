@@ -26,6 +26,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.lsp4j.CompletionOptions;
@@ -47,18 +48,20 @@ import net.prominic.groovyls.config.ICompilationUnitFactory;
 public class GroovyLanguageServer implements LanguageServer, LanguageClientAware {
     static WebSocketRunner webSocketRunner;
     public static void main(String[] args) {
-//        InputStream systemIn = System.in;
-//        OutputStream systemOut = System.out;
-//        // redirect System.out to System.err because we need to prevent
-//        // System.out from receiving anything that isn't an LSP message
-//        System.setOut(new PrintStream(System.err));
-//        GroovyLanguageServer server = new GroovyLanguageServer();
-//        Launcher<LanguageClient> launcher = Launcher.createLauncher(server, LanguageClient.class, systemIn, systemOut);
-//        server.connect(launcher.getRemoteProxy());
-//        launcher.startListening();
-
-        webSocketRunner = new WebSocketRunner();
-        webSocketRunner.runWebSocketServer("localhost", 9000, "/");
+        if (args.length == 1 && "--websocket".equals(args[0])) {
+            webSocketRunner = new WebSocketRunner();
+            webSocketRunner.runWebSocketServer("localhost", 9000, "/");
+        } else {
+            InputStream systemIn = System.in;
+            OutputStream systemOut = System.out;
+            // redirect System.out to System.err because we need to prevent
+            // System.out from receiving anything that isn't an LSP message
+            System.setOut(new PrintStream(System.err));
+            GroovyLanguageServer server = new GroovyLanguageServer();
+            Launcher<LanguageClient> launcher = Launcher.createLauncher(server, LanguageClient.class, systemIn, systemOut);
+            server.connect(launcher.getRemoteProxy());
+            launcher.startListening();
+        }
     }
 
     private GroovyServices groovyServices;
