@@ -12,5 +12,5 @@ const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(<ReactMonacoEditor
     defaultCode={defaultCode}
     hostname={'localhost'}
-    path={'/groovy-language-server'}
+    path={'/ws/groovy-lsp'}
     port={9000} />);

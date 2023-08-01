@@ -49,7 +49,7 @@ public class GroovyLanguageServer implements LanguageServer, LanguageClientAware
     public static void main(String[] args) {
         if (args.length == 1 && "--websocket".equals(args[0])) {
             WebSocketRunner webSocketRunner = new WebSocketRunner();
-            webSocketRunner.runWebSocketServer("localhost", 9000, "/");
+            webSocketRunner.runWebSocketServer("localhost", 9001, "/");
         } else {
             InputStream systemIn = System.in;
             OutputStream systemOut = System.out;

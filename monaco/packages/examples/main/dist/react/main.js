@@ -5,7 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ReactMonacoEditor } from './app.js';
-const defaultCode = `"hello world"`;
+const defaultCode = `println "hello world"`;
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(React.createElement(ReactMonacoEditor, { defaultCode: defaultCode, hostname: 'localhost', path: '/groovy-language-server', port: 9000 }));
+root.render(React.createElement(ReactMonacoEditor, { defaultCode: defaultCode, hostname: 'localhost', path: '/ws/groovy-lsp', port: 9000 }));
 //# sourceMappingURL=main.js.map

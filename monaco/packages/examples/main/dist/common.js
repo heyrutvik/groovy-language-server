@@ -8,14 +8,14 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { languages, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { createConfiguredEditor, createModelReference } from 'vscode/monaco';
 import 'vscode/default-extensions/theme-defaults';
-import 'vscode/default-extensions/json';
+import 'vscode/default-extensions/groovy';
 import { initServices, MonacoLanguageClient } from 'monaco-languageclient';
 import normalizeUrl from 'normalize-url';
 import { CloseAction, ErrorAction } from 'vscode-languageclient';
 import { WebSocketMessageReader, WebSocketMessageWriter, toSocket } from 'vscode-ws-jsonrpc';
 export const createLanguageClient = (transports) => {
     return new MonacoLanguageClient({
-        name: 'Sample Language Client',
+        name: 'Groovy Language Client',
         clientOptions: {
             // use a language id as a document selector
             documentSelector: ['groovy'],
@@ -52,14 +52,15 @@ export const createWebSocket = (url) => {
     };
     return webSocket;
 };
+// RR, I don't know what this is. 
 export const createDefaultJsonContent = () => {
     return `{
-    "$schema": "http://json.schemastore.org/coffeelint",
-    "line_endings": "unix"
-}`;
+        "$schema": "http://json.schemastore.org/coffeelint",
+        "line_endings": "unix"
+    }`;
 };
 export const createJsonEditor = async (config) => {
-    const languageId = 'groovy';
+    const languageId = 'Groovy';
     if (config.init === true) {
         await initServices({
             enableFilesService: true,

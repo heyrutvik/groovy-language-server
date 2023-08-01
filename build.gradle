@@ -1,36 +1,53 @@
 plugins {
-  id "com.github.johnrengelman.shadow" version "5.2.0"
-  id "java"
+  id 'java-library'
+  id 'maven-publish'
   id "application"
 }
+
+version = '0.1.0-SNAPSHOT'
+group = 'patel'
 
 java {
   sourceCompatibility = JavaVersion.VERSION_1_8
   targetCompatibility = JavaVersion.VERSION_1_8
+  withSourcesJar()
 }
-
-test {
-  useJUnitPlatform()
-}
+//
+//test {
+//  useJUnitPlatform()
+//}
 
 ext.mainClass = "net.prominic.groovyls.GroovyLanguageServer"
 
-tasks.build.dependsOn tasks.shadowJar
-
-shadowJar {
-  manifest {
-    attributes "Main-Class": "net.prominic.groovyls.GroovyLanguageServer"
-  }
-}
+//tasks.build.dependsOn tasks.shadowJar
+//
+//shadowJar {
+//  manifest {
+//    attributes "Main-Class": "net.prominic.groovyls.GroovyLanguageServer"
+//  }
+//}
 
 repositories  {
   mavenCentral()
+  mavenLocal()
+}
+
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+    }
+  }
+  repositories {
+    mavenLocal()
+  }
 }
 
 dependencies {
-  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j:0.12.0"
-  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.12.0"
-  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.websocket.jakarta:0.12.0"
+  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j:0.12.0-SNAPSHOT"
+  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.jsonrpc:0.12.0-SNAPSHOT"
+  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.websocket.jakarta:0.12.0-SNAPSHOT"
+  implementation "org.eclipse.lsp4j:org.eclipse.lsp4j.websocket.play:0.12.0-SNAPSHOT"
   implementation "org.apache.groovy:groovy:4.0.5"
   implementation "com.google.code.gson:gson:2.8.7"
   implementation "io.github.classgraph:classgraph:4.8.138"
@@ -39,6 +56,7 @@ dependencies {
   testImplementation "org.junit.jupiter:junit-jupiter-api:5.7.2"
   testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.7.2"
 }
+
 
 // assuming that Moonshine-IDE is checked out in a folder that has the same
 // parent folder as groovy-language-server, copies the built .jar file to the

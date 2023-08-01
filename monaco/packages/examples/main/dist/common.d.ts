@@ -4,7 +4,7 @@ import 'monaco-editor/esm/vs/editor/standalone/browser/iPadShowKeyboard/iPadShow
 import { editor, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { IReference, ITextFileEditorModel } from 'vscode/monaco';
 import 'vscode/default-extensions/theme-defaults';
-import 'vscode/default-extensions/json';
+import 'vscode/default-extensions/groovy';
 import { MonacoLanguageClient } from 'monaco-languageclient';
 import { MessageTransports } from 'vscode-languageclient';
 export declare const createLanguageClient: (transports: MessageTransports) => MonacoLanguageClient;

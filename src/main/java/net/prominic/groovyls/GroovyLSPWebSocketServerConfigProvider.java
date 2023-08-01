@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class GroovyLSPWebSocketServerConfigProvider implements ServerApplicationConfig {
 
-    private static final String WEBSOCKET_CAMEL_SERVER_PATH = "/groovy-language-server";
+    private static final String WEBSOCKET_CAMEL_SERVER_PATH = "/ws/groovy-lsp";
 
     @Override
     public Set<ServerEndpointConfig> getEndpointConfigs(Set<Class<? extends Endpoint>> endpointClasses) {
