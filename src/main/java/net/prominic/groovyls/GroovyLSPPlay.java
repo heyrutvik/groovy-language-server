@@ -1,7 +1,6 @@
 package net.prominic.groovyls;
 
 import akka.actor.ActorRef;
-import com.sun.tools.javac.util.List;
 import net.prominic.groovyls.config.CompilationUnitFactory;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.services.LanguageClient;
@@ -9,6 +8,7 @@ import org.eclipse.lsp4j.services.LanguageClientAware;
 import org.eclipse.lsp4j.websocket.play.WebSocketActor;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class GroovyLSPPlay extends WebSocketActor<LanguageClient> {
     public GroovyLSPPlay(ActorRef out) {
@@ -19,7 +19,7 @@ public class GroovyLSPPlay extends WebSocketActor<LanguageClient> {
     protected void configure(Launcher.Builder<LanguageClient> builder) {
         CompilationUnitFactory compilationUnit = new CompilationUnitFactory();
         compilationUnit.setAdditionalClasspathList(
-                List.of("src/main/resources/groovy-4.0.2.jar")
+                Collections.singletonList("src/main/resources/groovy-4.0.2.jar")
         );
         builder.setLocalService(new GroovyLanguageServer());
         builder.setRemoteInterface(LanguageClient.class);
