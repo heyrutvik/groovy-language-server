@@ -19,6 +19,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 package net.prominic.groovyls;
 
+import java.io.*;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,11 +45,20 @@ import net.prominic.groovyls.config.ICompilationUnitFactory;
 public class GroovyLanguageServer implements LanguageServer, LanguageClientAware {
 
     public static void main(String[] args) {
-        GroovyLanguageServer server = new GroovyLanguageServer();
-        Launcher<LanguageClient> launcher = Launcher.createLauncher(server, LanguageClient.class, System.in,
-                System.out);
-        server.connect(launcher.getRemoteProxy());
-        launcher.startListening();
+        if (args.length == 1 && "--websocket".equals(args[0])) {
+            WebSocketRunner webSocketRunner = new WebSocketRunner();
+            webSocketRunner.runWebSocketServer("localhost", 9000, "/");
+        } else {
+            InputStream systemIn = System.in;
+            OutputStream systemOut = System.out;
+            // redirect System.out to System.err because we need to prevent
+            // System.out from receiving anything that isn't an LSP message
+            System.setOut(new PrintStream(System.err));
+            GroovyLanguageServer server = new GroovyLanguageServer();
+            Launcher<LanguageClient> launcher = Launcher.createLauncher(server, LanguageClient.class, systemIn, systemOut);
+            server.connect(launcher.getRemoteProxy());
+            launcher.startListening();
+        }
     }
 
     private GroovyServices groovyServices;
