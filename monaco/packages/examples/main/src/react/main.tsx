@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { ReactMonacoEditor } from './app.js';
 
-const defaultCode = `println "hello world"`;
+const defaultCode = `package com.example\n\nimport java.lang.StringBuilder;\n\nStringBuilder s = new StringBuil`;
 
 const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(<ReactMonacoEditor
