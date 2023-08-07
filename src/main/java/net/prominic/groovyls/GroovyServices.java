@@ -120,6 +120,7 @@ public class GroovyServices implements TextDocumentService, WorkspaceService, La
 	private ScanResult classGraphScanResult = null;
 	private GroovyClassLoader classLoader = null;
 	private URI previousContext = null;
+	private boolean hasError = false;
 
 	public GroovyServices(ICompilationUnitFactory factory) {
 		compilationUnitFactory = factory;
@@ -229,7 +230,8 @@ public class GroovyServices implements TextDocumentService, WorkspaceService, La
 
 		String originalSource = null;
 		ASTNode offsetNode = astVisitor.getNodeAtLineAndColumn(uri, position.getLine(), position.getCharacter());
-		if (offsetNode == null) {
+		if (offsetNode == null || hasError) {
+			hasError = false;
 			originalSource = fileContentsTracker.getContents(uri);
 			VersionedTextDocumentIdentifier versionedTextDocument = new VersionedTextDocumentIdentifier(
 					textDocument.getUri(), 1);
@@ -295,6 +297,7 @@ public class GroovyServices implements TextDocumentService, WorkspaceService, La
 		String originalSource = null;
 		ASTNode offsetNode = astVisitor.getNodeAtLineAndColumn(uri, position.getLine(), position.getCharacter());
 		if (offsetNode == null) {
+			hasError = false;
 			originalSource = fileContentsTracker.getContents(uri);
 			VersionedTextDocumentIdentifier versionedTextDocument = new VersionedTextDocumentIdentifier(
 					textDocument.getUri(), 1);
@@ -467,7 +470,7 @@ public class GroovyServices implements TextDocumentService, WorkspaceService, La
 			//http://groovy-lang.org/metaprogramming.html#_compilation_phases_guide
 			compilationUnit.compile(Phases.CANONICALIZATION);
 		} catch (MultipleCompilationErrorsException e) {
-			// ignore
+			e.printStackTrace(System.err);
 		} catch (GroovyBugError e) {
 			System.err.println("Unexpected exception in language server when compiling Groovy.");
 			e.printStackTrace(System.err);
@@ -477,6 +480,10 @@ public class GroovyServices implements TextDocumentService, WorkspaceService, La
 		}
 		Set<PublishDiagnosticsParams> diagnostics = handleErrorCollector(compilationUnit.getErrorCollector());
 		diagnostics.stream().forEach(languageClient::publishDiagnostics);
+
+		if (compilationUnit.getErrorCollector().hasErrors()) {
+			hasError = true;
+		}
 	}
 
 	private Set<PublishDiagnosticsParams> handleErrorCollector(ErrorCollector collector) {
